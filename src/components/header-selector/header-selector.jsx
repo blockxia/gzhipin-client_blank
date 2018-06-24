@@ -2,6 +2,9 @@ import React,{Component} from 'react'
 import {List,Grid}from 'antd-mobile'
 import PropTypes from 'prop-types'
 export default class HeaderSelector extends Component{
+    static propTypes={
+        setHeader:PropTypes.func.isRequired
+    }
     state={
         icon:null
     }
