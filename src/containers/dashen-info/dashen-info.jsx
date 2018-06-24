@@ -13,9 +13,15 @@ import {updateUser} from '../../redux/actions'
         post: '',
         info: ''
     }
+     handleChange=(name,value)=>{
+         this.setState({
+             [name]:value
+         })
+     }
     setHeader=(header)=>{
       this.setState({header})
     }
+
      save = () => {
          this.props.updateUser(this.state)
      }
