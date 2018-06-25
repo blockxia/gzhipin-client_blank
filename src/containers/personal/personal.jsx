@@ -11,45 +11,30 @@ const Item = List.Item
 const Brief = Item.Brief
 
  class Personal extends React.Component {
-     // logout=()=>{
-     //     Modal.alert('退出','确定退出登陆吗┭┮﹏┭┮?',[
-     //         {
-     //             text:'取消'
-     //         },
-     //         {
-     //             text:'确定',
-     //             onPress:()=>{
-     //               Cookies.remove('userid')
-     //                 // console.log(Cookies);
-     //                 // console.log(Cookies.remove);
-     //
-     //                 this.props.resetUser()
-     //             }
-     //         }
-     //     ])
-     // }
-     logout = () => {
-         Modal.alert('退出', '确认退出登陆吗?', [
+     logout=()=>{
+         Modal.alert('退出','确定退出登陆吗┭┮﹏┭┮?',[
              {
-                 text: '取消',
+                 text:'取消'
              },
              {
-                 text: '确认',
-                 onPress: () => {
-                     // 清除cooike中的userid
-                     Cookies.remove('userid')
-                     // 重置redux中的user状态
+                 text:'确定',
+                 onPress:()=>{
+                   Cookies.remove('userid')
+                     // console.log(Cookies);
+                     // console.log(Cookies.remove);
+
                      this.props.resetUser()
                  }
-             },
+             }
          ])
      }
+
     render() {
 
-        const {username,header,info,post,company,salary,type}=this.props.user
-          console.log(this.props);
+        const {username,header,info,post,company,salary}=this.props.user
+          // console.log(this.props);
         return (
-            <div>
+            <div style={{marginTop:50}}>
                 <Result
                     img={<img src={require(`../../assets/imgs/${header}.png`)} style={{width: 50}} alt="header"/>}
                     title={username}
@@ -65,9 +50,7 @@ const Brief = Item.Brief
                 </List>
                 <WhiteSpace/>
                 <List>
-                    <Button type='warning'
-                     onClick={this.logout}
-                    >退出登录</Button>
+                    <Button type='warning' onClick={this.logout}>退出登录</Button>
                 </List>
             </div>
         )

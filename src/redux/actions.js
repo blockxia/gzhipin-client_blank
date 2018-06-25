@@ -1,9 +1,10 @@
-import {AUTH_SUCCESS,ERROR_MSG,RECEIVE_USER,RESET_USER}from './action-types'
-import {reqLogin,reqRegister,reqUpdateUser,reqUser}from '../api'
+import {AUTH_SUCCESS,ERROR_MSG,RECEIVE_USER,RESET_USER,RECEIVE_USER_LIST}from './action-types'
+import {reqLogin,reqRegister,reqUpdateUser,reqUser,reqUserList}from '../api'
 
 const authSuccess=(user)=>({type:AUTH_SUCCESS,data:user})
 const errorMsg=(msg)=>({type:ERROR_MSG,data:msg})
 const receiveUser=(user)=>({type:RECEIVE_USER,data:user})
+const receiveUserList=(users)=>({type:RECEIVE_USER_LIST,data:users})
 export const resetUser=(msg)=>({type:RESET_USER,data:msg})
 
 export const register=({username,password,password2,type})=>{
@@ -52,7 +53,7 @@ export const login=(username, password)=>{
 export const updateUser=(user)=>{
     return async dispatch=>{
         const response=await reqUpdateUser(user)
-        console.log(response);
+        // console.log(response);
         const result=response.data
         // debugger
         if(result.code===0){
@@ -71,6 +72,18 @@ export const getUser=()=>{
             dispatch(receiveUser(result.data))
         }else {
             dispatch(resetUser(result.msg))
+        }
+    }
+}
+
+export const getUserList=(type)=>{
+    // console.log('-----------');
+    return async dispatch=>{
+        const response=await reqUserList(type)
+        const result =response.data
+        // console.log(result);
+        if(result.code===0){
+            dispatch(receiveUserList(result.data))
         }
     }
 }
