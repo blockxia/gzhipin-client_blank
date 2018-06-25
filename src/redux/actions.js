@@ -1,10 +1,10 @@
 import {AUTH_SUCCESS,ERROR_MSG,RECEIVE_USER,RESET_USER}from './action-types'
-import {reqLogin,reqRegister,reqUpdateUser}from '../api'
+import {reqLogin,reqRegister,reqUpdateUser,reqUser}from '../api'
 
 const authSuccess=(user)=>({type:AUTH_SUCCESS,data:user})
 const errorMsg=(msg)=>({type:ERROR_MSG,data:msg})
 const receiveUser=(user)=>({type:RECEIVE_USER,data:user})
-const resetUser=(msg)=>({type:RESET_USER,data:msg})
+export const resetUser=(msg)=>({type:RESET_USER,data:msg})
 
 export const register=({username,password,password2,type})=>{
     if(!username){
@@ -52,11 +52,24 @@ export const login=(username, password)=>{
 export const updateUser=(user)=>{
     return async dispatch=>{
         const response=await reqUpdateUser(user)
+        console.log(response);
         const result=response.data
         // debugger
         if(result.code===0){
             dispatch(receiveUser(result.data))
         }else{
+            dispatch(resetUser(result.msg))
+        }
+    }
+}
+
+export const getUser=()=>{
+    return async dispatch=>{
+        const response=await reqUser()
+        const result=response.data
+        if(result.code===0){
+            dispatch(receiveUser(result.data))
+        }else {
             dispatch(resetUser(result.msg))
         }
     }
