@@ -13,7 +13,7 @@ import Personal from '../personal/personal'
 import NotFound from '../../components/not-found/not-found'
 import NavFooter from '../../components/nav-footer/nav-footer'
 import {getRedirectPath} from "../../utils/index";
-
+import Chat from '../chat/chat'
  class Main extends Component{
      navList = [
          {
@@ -84,6 +84,7 @@ import {getRedirectPath} from "../../utils/index";
                    <Route path='/dashen' component={Dashen}/>
                    <Route path='/message' component={Message}/>
                    <Route path='/personal' component={Personal}/>
+                   <Route path='/chat/:userid' component={Chat}/>
                    <Route component={NotFound}/>
                </Switch>
                {currentNav? <NavFooter navList={navList}/>:null}
