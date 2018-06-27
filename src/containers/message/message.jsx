@@ -4,7 +4,7 @@
 import React, {Component} from 'react'
 import {connect} from 'react-redux'
 import {List, Badge} from 'antd-mobile'
-
+import QueueAnim from 'rc-queue-anim'
 const Item = List.Item
 const Brief = Item.Brief
 // 根据chatMsg得到所有聊天的最后聊天msg的数组
@@ -14,7 +14,7 @@ function getLastMsgs(chatMsgs,meId) {
     // 1. 创建一个用于保存所有lastMsg的对象容器: lastMsgObjs
     const lastMsgObjs={}
     // 2. 遍历每个msg, 判断msg是否是它对应的聊天lastMsg, 如果是放入
-    chatMsgs.forEach((msg)=>{
+    chatMsgs.forEach(msg=>{
         // 统计msg自身的unReadCount
         if(!msg.read && msg.to===meId){
             msg.unReadCount=1
@@ -55,6 +55,8 @@ class Message extends Component {
        
         return (
             <List style={{marginTop:50,marginBottom:50}}>
+                {/*alpha left right top bottom scale scaleBig scaleX scaleY*/}
+                <QueueAnim type='scale' delay={100}>
                 {
                     lastMsgs.map((msg,index)=>{
                        const targetId=msg.from===meId ? msg.to :msg.from
@@ -73,6 +75,7 @@ class Message extends Component {
                         )
                     })
                 }
+                </QueueAnim>
             </List>
         )
     }

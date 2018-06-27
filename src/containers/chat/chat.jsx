@@ -4,8 +4,9 @@
 
 import React, {Component} from 'react'
 import {NavBar, List, InputItem,Grid,Icon} from 'antd-mobile'
+
 import {connect} from 'react-redux'
-import {sendMsg} from '../../redux/actions'
+import {sendMsg,updateMsg} from '../../redux/actions'
 const Item = List.Item
 
 class Chat extends Component {
@@ -36,12 +37,20 @@ class Chat extends Component {
     componentDidMount() {
         // 初始显示列表
         window.scrollTo(0, document.body.scrollHeight)
+        const from=this.props.match.params.userid
+        const to=this.props.user._id
+        this.props.updateMsg(from,to)
     }
 
     // 更新后, 自动滚动到底部
     componentDidUpdate () {
         // 更新显示列表
         window.scrollTo(0, document.body.scrollHeight)
+    }
+    componentWillUnmount(){
+        const from=this.props.match.params.userid
+        const to=this.props.user._id
+        this.props.updateMsg(from,to)
     }
     toggleShow=()=>{
         const isShow=!this.state.isShow
@@ -60,24 +69,26 @@ class Chat extends Component {
         // console.log('users信息'+users);
         const targetId=this.props.match.params.userid
         const meId=user._id
-        const meIdUser=users[meId]
+        // const meIdUser=users[meId]
         //&&!users[meId]
         if(!users[targetId]){
             return null
         }
         const chatId=[targetId,meId].sort().join('_')
+
         const currentMsgs=chatMsgs.filter(msg=>msg.chat_id===chatId)
         const targetUser=users[targetId]
 
 
         const targetIcon=targetUser.header ? require(`../../assets/imgs/${targetUser.header}.png`):null
-        const meIdIcon=meIdUser.header ? require(`../../assets/imgs/${meIdUser.header}.png`):null
+        // const meIdIcon=meIdUser.header ? require(`../../assets/imgs/${meIdUser.header}.png`):null
         return (
             <div id='chat-page'>
                 <NavBar icon={<Icon type='left' onClick={()=>this.props.history.goBack()}/>}
 
                 >{targetUser.username}</NavBar>
                 <List style={{marginBottom:50}}>
+
                     {
                         currentMsgs.map((msg,index)=>{
                             if(msg.to===meId){
@@ -102,9 +113,8 @@ class Chat extends Component {
                             }
                         })
                     }
+
                 </List>
-
-
                 <div className='am-tab-bar'>
                     <InputItem
                         placeholder="请输入"
@@ -113,8 +123,9 @@ class Chat extends Component {
                         value={this.state.content}
                         extra={
                            <div>
-                               <span onClick={this.toggleShow}>😋</span>
-                               <span onClick={this.send} style={{marginLeft:10}}>发送</span>
+                               {/*<span onClick={()=>this.setState({content: ''})}>◀删除</span>*/}
+                               <span onClick={this.toggleShow} style={{marginLeft:10}}>😋</span>
+                               <span onClick={this.send} style={{marginLeft:20}}>发送</span>
                            </div>
 
                         }
@@ -143,5 +154,5 @@ class Chat extends Component {
 }
 export default connect(
   state=>({user:state.user,chat:state.chat}),
-   {sendMsg}
+   {sendMsg,updateMsg}
 )(Chat)

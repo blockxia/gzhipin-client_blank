@@ -5,21 +5,26 @@ import {
     RESET_USER,
     RECEIVE_USER_LIST,
     RECEIVE_CHAT,
-    RECEIVE_MSG
+    RECEIVE_MSG,
+    MSG_UPDATE
 } from './action-types'
-import {reqLogin,reqRegister,reqUpdateUser,reqUser,reqUserList,reqChatMsgList}from '../api'
+import {reqLogin,reqRegister,reqUpdateUser,reqUser,reqUserList,reqChatMsgList,reqReadChatMsg}from '../api'
 import io from 'socket.io-client'
 const socket=io('ws://localhost:4000')
 
 function initSocketIO(userid,dispatch) {
-    socket.on('receiveMsg',function (chatMsg) {
-        if(chatMsg.from===userid||chatMsg.to===userid){
-            console.log('接收到一个需要显示的消息')
-            dispatch(receiveMsg(chatMsg))
-        }else{
-            console.log('接收到一条与我无关消息')
-        }
-    })
+    if(!io.socket){
+        io.socket=socket
+        socket.on('receiveMsg',function (chatMsg) {
+            if(chatMsg.from===userid||chatMsg.to===userid){
+                console.log('接收到一个需要显示的消息')
+                dispatch(receiveMsg(chatMsg,userid))
+            }else{
+                console.log('接收到一条与我无关消息')
+            }
+        })
+    }
+
 }
 async function getMsgList(userid,dispatch) {
     initSocketIO(userid,dispatch)
@@ -27,7 +32,7 @@ async function getMsgList(userid,dispatch) {
     const result=response.data
     if(result.code===0){
         console.log('获取得到当前用户的所有聊天相关信息',result.data);
-        dispatch(receiveChat(result.data))
+        dispatch(receiveChat({...result.data,meId:userid}))
     }
 
 }
@@ -35,8 +40,9 @@ const authSuccess=(user)=>({type:AUTH_SUCCESS,data:user})
 const errorMsg=(msg)=>({type:ERROR_MSG,data:msg})
 const receiveUser=(user)=>({type:RECEIVE_USER,data:user})
 const receiveUserList=(users)=>({type:RECEIVE_USER_LIST,data:users})
-const receiveMsg=(chatMsg)=>({type:RECEIVE_MSG,data:chatMsg})
-const receiveChat=({users,chatMsgs})=>({type:RECEIVE_CHAT,data:{users,chatMsgs}})
+const receiveMsg=(chatMsg,meId)=>({type:RECEIVE_MSG,data:{chatMsg,meId}})
+const receiveChat=({users,chatMsgs,meId})=>({type:RECEIVE_CHAT,data:{users,chatMsgs,meId}})
+const msgUpdate=({count,from,to})=>({type:MSG_UPDATE,data:{count,from,to}})
 export const resetUser=(msg)=>({type:RESET_USER,data:msg})
 
 export const register=({username,password,password2,type})=>{
@@ -132,4 +138,16 @@ export const sendMsg=({from, to, content})=>{
         console.log('浏览器向服务器发送消息', from, to, content)
         socket.emit('sendMsg',{from, to, content})
     }
+}
+
+export const updateMsg=(from,to)=>{
+        return async dispatch=>{
+            const response=await reqReadChatMsg(from)
+            const result=response.data
+            if(result.code===0){
+                const count=result.data
+                dispatch(msgUpdate({count,from,to}))
+            }
+
+        }
 }
