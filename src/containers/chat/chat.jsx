@@ -123,7 +123,7 @@ class Chat extends Component {
                         value={this.state.content}
                         extra={
                            <div>
-                               {/*<span onClick={()=>this.setState({content: ''})}>◀删除</span>*/}
+                               <span onClick={()=>this.setState({content: ''})}>◀删除</span>
                                <span onClick={this.toggleShow} style={{marginLeft:10}}>😋</span>
                                <span onClick={this.send} style={{marginLeft:20}}>发送</span>
                            </div>
